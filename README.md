@@ -1,10 +1,18 @@
 # Development Setup - Windows GUI Host / Linux Verwaltung & Code Verarbeitung
 
-## Ziel
+## Was dieses Projekt demonstriert
 
-Ziel des Setups ist es, eine stabile Linux Arbeitsumgebung für Softwareentwicklung bereitszustellen, während Windows ausschließlich als GUI-Host verwendet wird.
+Dieses Repository dokumentiert ein selbst entworfenes Entwicklungs-Setup, um erworbene Fähigkeiten praxisnah und nachvollziehbar darzustellen.
 
-Dadurch können Coding-Tutorials und Entwicklungsworkflows einheitlich in einer Linux-Umbegung durchgeführt werden, ohne die gewohnte Windows-Oberfläche, Shortcuts oder Freizeitnutzung aufzugeben
+- Planung einer isolierten Entwicklungsumgebung
+- Sichere Remote-Verwaltung (SSH, tmux)
+- Trennung von Host- und Arbeitsumgebung
+- Automatisierte Backups mit systemd
+- Saubere, nachvollziehbare technische Dokumentation
+
+## Ziel des Setups
+
+Ziel des Setups ist es, eine stabile, bequem erreichbare Linux Arbeitsumgebung für Softwareentwicklung bereitszustellen, während Windows ausschließlich als GUI-Host verwendet wird. Dadurch können Coding-Tutorials und Entwicklungsworkflows einheitlich in einer Linux-Umbegung durchgeführt werden, ohne die gewohnte Windows-Oberfläche, Shortcuts oder Freizeitnutzung aufzugeben.
 
 Aufgaben der Windows Maschine in diesem Setup
 
@@ -28,7 +36,6 @@ Aufgaben der Ubuntu Server VM:
 - Entwicklung/Code-Editing über VS Code Remote-SSH
 
 ## Motivation & Designentscheidungen
-
 
 ### Warum Ubuntu in einer VM statt Dual Boot
 - Kein Neustart nötig,  Ubuntu Server ohne GUI startet sehr schnell
