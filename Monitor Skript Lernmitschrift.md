@@ -1,6 +1,8 @@
 # Konzept und Use-Case Überlegungen
 
-Skript/Service für Automatisches Monitoring von Diskspace und Durchschnittslast, Warnung bei Überschreitungen, einfache logs
+In diesem Dokument wird dokumentiert, wie ich mir Schritt für Schritt ein Bash Skript zum Monitoring von Durchschnittslast und Diskbelegung erarbeite. Ziel ist primär die Vermeidung KI generierter copy-paste Lösungen, um persönliche Skills auszubauen und zu festigen.
+
+Basiskonzept: Skript/Service für Automatisches Monitoring von Diskspace und Durchschnittslast, Warnung bei Überschreitungen, einfache logs
 
 Für Diskspace mountlogik verwenden. Damit ließe sich das Skript theoretisch auch auf einer neuen Maschine einfach einbauen.
 / = Für die Überwachung relevantes Wurzelverzeichnis
@@ -14,6 +16,7 @@ Zustandsspeicherung ist ebenfalls nicht notwendig, sofern Warnungen korrekt ausg
 
 ### Last
 
+
 Beobachtung unter Last mit Strss-NG --cpu 2 -timeout 120
 1 min. avg zwischen 2,4 und 2,99
 
@@ -23,6 +26,8 @@ awk '{print $3}' /proc/loadavg	-Ausgabe(print) an Positionsargument 3
 Terminal = 0.49
 
 ### Kernzanzahl
+
+Für die mathematische Einarbeitung der verfügbaren Kerne in das Skript, um auch bei mehr zugewiesenen Kernen zu funktionieren.
 
 Versucht mit lscpu | grep "CPU(s)" nur die nötige Zeile zu bekommen, schlechte Idee  
 lscpu | awk 'NR==5 {print $5}' liefert gewünschte Zahl, aber fragil, da es von einem UI Element abliest.  
