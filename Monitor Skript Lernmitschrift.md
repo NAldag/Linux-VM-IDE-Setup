@@ -1,18 +1,18 @@
 # Konzept und Use-Case Überlegungen (WORK IN PROGRESS)
 
-In diesem Dokument wird dokumentiert, wie ich mir Schritt für Schritt ein Bash Skript zum Monitoring von Durchschnittslast und Diskbelegung erarbeite. Ziel ist primär die Vermeidung KI generierter copy-paste Lösungen, um persönliche Skills auszubauen und zu festigen.
+In diesem Dokument wird festgehalten, wie ich mir Schritt für Schritt ein Bash Skript zum Monitoring von Durchschnittslast und Diskbelegung erarbeite. Ziel ist primär die Vermeidung KI generierter copy-paste Lösungen, um persönliche Skills auszubauen und zu festigen.
 
 Basiskonzept: Skript/Service für Automatisches Monitoring von Diskspace und Durchschnittslast, Warnung bei Überschreitungen, einfache logs
 
-Für Diskspace mountlogik verwenden. Damit ließe sich das Skript theoretisch auch auf einer neuen Maschine einfach einbauen.
-/ = Für die Überwachung relevantes Wurzelverzeichnis
-Unter 80 % = OK, über 80 = Warnung, über 90% = Kritisch -Disk läuft meist monoton, daher keiner wiederholten Warnungen, Zustandswechsel sind Aussagekräftig
-Derzeit 2 cores: 2x1 = 2 kritisch 2x0,7 = 1,4 Warnung
-Lastdurchschnitt der 15 minuten, das skript soll nicht bei jeder Kleinigkeit, die man nichtmal spürt, auslösen, sondern bei lanfristiger Überbeanspruchung
-Detaillierte logs sind für dieses System und Use Case nicht notwendig, da die Lösung bei Überlast klar ist: Mehr Kerne zuweisen oder mit Verzögerungen leben.
+Für Diskspace mountlogik verwenden. Damit ließe sich das Skript theoretisch auch auf einer neuen Maschine einfach einbauen.  
+/ = Für die Überwachung relevantes Wurzelverzeichnis  
+Unter 80 % = OK, über 80 = Warnung, über 90% = Kritisch -Disk läuft meist monoton, daher keiner wiederholten Warnungen, Zustandswechsel sind Aussagekräftig  
+Derzeit 2 cores: 2x1 = 2 kritisch 2x0,7 = 1,4 Warnung  
+Lastdurchschnitt der 15 minuten, das skript soll nicht bei jeder Kleinigkeit, die man nichtmal spürt, auslösen, sondern bei lanfristiger Überbeanspruchung  
+Detaillierte logs sind für dieses System und Use Case nicht notwendig, da die Lösung bei Überlast klar ist: Mehr Kerne zuweisen oder mit Verzögerungen leben.  
 Zustandsspeicherung ist ebenfalls nicht notwendig, sofern Warnungen korrekt ausgelöst werden, da das Problem bis zum nächsten Start gelöst wird.
 
-## Erarbeitungd er Rohdaten
+## Finden und Ausgeben der Rohdaten
 
 ### Last
 
@@ -24,6 +24,7 @@ loadavg letzte 15 min. auslesen
 aus ~/proc/loadavg
 awk '{print $3}' /proc/loadavg	-Ausgabe(print) an Positionsargument 3
 Terminal = 0.49
+Im Skript *100 für einen Integer, der nativ von Bash verarbeitet werden kann.
 
 ### Kernzanzahl
 
@@ -51,3 +52,12 @@ df -P / | awk 'NR==2 {print $5}'
 
 df -P / 			-Zeigt Belegung des Wurzelverzeichnisses ohne Umbrüche
 | awk 'NR==2 {print $5}' 	-Ausgabe wird an awk weitergegeben, welches in Zeile 2(NR==2) 5. Feld({print$5} ausgibt, awk braucht einfache Anführungszeichen
+Next: Prozentzeichen entfernen, Integer oder floatvergleich
+
+## Auswahl der Syntax
+
+Sprache: Bash
+
+Strukturen: 
+Pfadvariablen:
+
