@@ -1,4 +1,4 @@
-# Konzept Schärfung
+# Konzept und Use-Case Überlegungen
 
 Für Diskspace mountlogik verwenden. Damit ließe sich das Skript theoretisch auch auf einer neuen Maschine einfach einbauen.
 / = Für die Überwachung relevantes Wurzelverzeichnis
