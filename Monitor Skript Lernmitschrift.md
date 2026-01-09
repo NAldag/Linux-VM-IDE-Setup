@@ -90,6 +90,8 @@ LOAD_15=$(awk '{print $3}' /proc/loadavg)
 
 ### Lastenvergleich
 
+```bash
+
 LOAD_STATUS="OK"
 
 if awk "BEGIN {exit !($LOAD_15 >= $LOAD_CRIT)}"; then
@@ -98,12 +100,16 @@ if awk "BEGIN {exit !($LOAD_15 >= $LOAD_CRIT)}"; then
     LOAD_STATUS="WARN"
 fi
 
+```
+
 ### Festplattenbelegung des home Verzeichnisses formatgerecht auslesen
 
 DISK_USAGE_RAW=$(df -P / | awk 'NR==2 {print $5}')
 DISK_USAGE=${DISK_USAGE_RAW%\%}
 
 ### Vergleich Festplatte mit festgelegten CRIT/WARN werten
+
+```bash
 
 DISK_STATUS="OK"
 
@@ -113,7 +119,11 @@ elif [ "$DISK_USAGE" -ge 80 ]; then
   DISK_STATUS="WARN"
 fi
 
+```
+
 ### Ausgabe
+
+```bash
 
 echo "System Health Check"
 echo "==================="
@@ -121,6 +131,7 @@ echo "CPU Cores        : $CPU_CORES"
 echo "Load (15 min)    : $LOAD_15 (WARN >= $LOAD_WARN | CRIT >= $LOAD_CRIT) => $LOAD_STATUS"
 echo "Disk Usage (/)   : $DISK_USAGE% => $DISK_STATUS"
 
+```
 
 ### Test des Skripts (nur Last unter Stress)
 

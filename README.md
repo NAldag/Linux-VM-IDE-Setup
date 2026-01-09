@@ -251,9 +251,8 @@ systemctl show monitor-system.service -p ExecMainStatus
 
 #### Funktionstests
 
-Skript ausführbar machen: chmod u+x monitor_system.sh  
-Systemd starten: sudo systemctl start monitor-system.service  
-Timer aktivieren: sudo systemctl enable --now monitor-system.timer
+Skript nur für aktuellen User ausführbar machen: chmod u+x monitor_system.sh, unnötige Berechtigungen vermeiden.
+Systemd starten: sudo systemctl start monitor-system.service  Timer aktivieren: sudo systemctl enable --now monitor-system.timer
 Lasttest: stress-ng --cpu 2 --timeout 180  
 Diskspace-Test: fallocate -l 10G ~/disk_test_file
 echo $? -Zeigt nach manuellem Skriptlauf
