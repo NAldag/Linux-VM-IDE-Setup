@@ -55,10 +55,77 @@ df -P / 			-Zeigt Belegung des Wurzelverzeichnisses ohne Umbrüche
 | awk 'NR==2 {print $5}' 	-Ausgabe wird an awk weitergegeben, welches in Zeile 2(NR==2) 5. Feld({print$5} ausgibt, awk braucht einfache Anführungszeichen   
 Next: Prozentzeichen entfernen, Integer oder floatvergleich  
 
-## Auswahl der Syntax
+## Finale Syntax
 
 Sprache: Bash
+set -u          -Falls Variable nicht existiert
+set -o pipefail -Falls Pipe fehlschläge
 
-Strukturen: 
-Pfadvariablen:
+### Physische Kerne ermitteln
+
+CPU_CORES=$(grep -h . /sys/devices/system/cpu/cpu*/topology/core_id \
+  | cut -d: -f2 \
+  | sort -u \
+  | wc -l)
+
+### Last Schwellen berechnen & Lastdurchschnitt auslesen
+awk kann floats verarbeiten, exit codes setzen und ist auf jedem linux system vorhanden, deshalb awk statt bc
+
+Begin {} bei awk notwendig, da awk normalerweise von STDIN liest, es braucht daher eine Anweisung, zu "beginnen".
+
+LOAD_WARN=$(awk "BEGIN {printf \"%.2f\", $CPU_CORES * 0.7}")
+LOAD_CRIT=$(awk "BEGIN {printf \"%.2f\", $CPU_CORES * 1.0}")
+
+LOAD_15=$(awk '{print $3}' /proc/loadavg)
+
+### Lastenvergleich 
+
+LOAD_STATUS="OK"
+
+if awk "BEGIN {exit !($LOAD_15 >= $LOAD_CRIT)}"; then
+    LOAD_STATUS="CRIT"
+    elif awk "BEGIN {exit !($LOAD_15 >= $LOAD_WARN)}"; then
+    LOAD_STATUS="WARN"
+fi
+
+### Festplattenbelegung des home Verzeichnisses formatgerecht auslesen
+
+DISK_USAGE_RAW=$(df -P / | awk 'NR==2 {print $5}')
+DISK_USAGE=${DISK_USAGE_RAW%\%}
+
+### Vergleich Festplatte mit festgelegten CRIT/WARN werten
+
+DISK_STATUS="OK"
+
+if [ "$DISK_USAGE" -ge 90 ]; then
+  DISK_STATUS="CRIT"
+elif [ "$DISK_USAGE" -ge 80 ]; then
+  DISK_STATUS="WARN"
+fi
+
+
+### Ausgabe erzeigen
+
+echo "System Health Check"
+echo "==================="
+echo "CPU Cores        : $CPU_CORES"
+echo "Load (15 min)    : $LOAD_15 (WARN >= $LOAD_WARN | CRIT >= $LOAD_CRIT) => $LOAD_STATUS"
+echo "Disk Usage (/)   : $DISK_USAGE% => $DISK_STATUS"
+
+
+### Test des Skripts (nur Last unter Stress)
+Simulierung einer vollen Festplatte auf to-do liste
+
+Last erzeugen:
+Stress-ng --cpu --timeout 
+
+
+Skript ausführbar machen, best practise: Keine Berechtigungen, die nicht zwingen notwendig sind, deshalb nur (u)ser + x
+
+chmod u+x monitor_system.sh
+./monitor_system.sh
+
+
+
+
 
