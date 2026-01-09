@@ -21,7 +21,7 @@ Beobachtung unter Last mit Strss-NG --cpu 2 -timeout 120
 
 loadavg letzte 15 min. auslesen
 aus ~/proc/loadavg  
-awk '{print $3}' /proc/loadavg	-Ausgabe(print) an Positionsargument 3  
+awk '{print $3}' /proc/loadavg -Ausgabe(print) an Positionsargument 3  
 Terminal = 0.49  
 Im Skript *100 für einen Integer, der nativ von Bash verarbeitet werden kann.  
 Mit Variablen für OK, WARN, KRIT abgleichen
@@ -40,10 +40,10 @@ Genutzte Funktionen Grep Cut Sort WC Pipe
 
 grep -h . /sys/devices/system/cpu/cpu*/topology/core_id \ | cut -d: -f2 \ | sort -u \ | wc -l  
 
-Grep -h . /sys/devices/system/cpu/cpu*/topology/core_id 	-liefert Dateiname und Core ID -h flagge inkludiert immer Dateinamen. Für ein robustes Skript, welches auf dieser Annahme basiert, essenziell  
-| cut -d: -f2 	-trennt am doppelpunkt und gibt das damit eindeuitige feld 2, die core id aus  
-| sort -u 	-Sortiert die IDs und entfernt duplikate, sodass jede zeile einem Kern zuzuordnen ist  
-| wc -l 	-wordcount zählt die Zeilen  mit -l  
+Grep -h . /sys/devices/system/cpu/cpu*/topology/core_id -liefert Dateiname und Core ID -h flagge inkludiert immer Dateinamen. Für ein robustes Skript, welches auf dieser Annahme basiert, essenziell  
+| cut -d: -f2 -trennt am doppelpunkt und gibt das damit eindeuitige feld 2, die core id aus  
+| sort -u -Sortiert die IDs und entfernt duplikate, sodass jede zeile einem Kern zuzuordnen ist  
+| wc -l -wordcount zählt die Zeilen  mit -l  
 
 Ergebnis: Anzahl der physischen Kerne als Rohdaten
 
@@ -51,8 +51,9 @@ Ergebnis: Anzahl der physischen Kerne als Rohdaten
 
 df -P / | awk 'NR==2 {print $5}'  
 
-df -P / 			-Zeigt Belegung des Wurzelverzeichnisses ohne Umbrüche  
-| awk 'NR==2 {print $5}' 	-Ausgabe wird an awk weitergegeben, welches in Zeile 2(NR==2) 5. Feld({print$5} ausgibt, awk braucht einfache Anführungszeichen   
+df -P / -Zeigt Belegung des Wurzelverzeichnisses ohne Umbrüche  
+| awk 'NR==2 {print $5}'(NR==2) -Gibt es an gawk, um Zeile 2 Feld 5 auszugeben
+
 Next: Prozentzeichen entfernen, Integer oder floatvergleich  
 
 ## Syntax und Tests
@@ -63,22 +64,31 @@ set -o pipefail -Falls Pipe fehlschläge
 
 ### Physische Kerne ermitteln
 
+```bash
+
 CPU_CORES=$(grep -h . /sys/devices/system/cpu/cpu*/topology/core_id \
   | cut -d: -f2 \
   | sort -u \
   | wc -l)
 
+```
+
 ### Last Schwellen berechnen & Lastdurchschnitt auslesen
+
 awk kann floats verarbeiten, exit codes setzen und ist auf jedem linux system vorhanden, deshalb awk statt bc
 
 Begin {} bei awk notwendig, da awk normalerweise von STDIN liest, es braucht daher eine Anweisung, zu "beginnen".
+
+```bash
 
 LOAD_WARN=$(awk "BEGIN {printf \"%.2f\", $CPU_CORES * 0.7}")
 LOAD_CRIT=$(awk "BEGIN {printf \"%.2f\", $CPU_CORES * 1.0}")
 
 LOAD_15=$(awk '{print $3}' /proc/loadavg)
 
-### Lastenvergleich 
+```
+
+### Lastenvergleich
 
 LOAD_STATUS="OK"
 
@@ -103,8 +113,7 @@ elif [ "$DISK_USAGE" -ge 80 ]; then
   DISK_STATUS="WARN"
 fi
 
-
-### Ausgabe erzeigen
+### Ausgabe
 
 echo "System Health Check"
 echo "==================="
@@ -130,21 +139,19 @@ Stress-ng --cpu --timeout 180
 Test ohne Last: Keine Veränderung der Last  
 Last steigt kontinuierlich = Skript Logik OK
 
-
-
 Skript ausführbar machen, best practise: Keine Berechtigungen, die nicht zwingen notwendig sind, deshalb nur (u)ser + x
 
 chmod u+x monitor_system.sh
 ./monitor_system.sh
 
-
 ## Service Datei & Timer  erstellen
+
 Todo: Vollständiges Verständnis von Service Datei/Timer Logik & Syntax noch nicht adäquat, weitere Quellen finden, folgendes sollte funktionieren.
 
 Erklärung systemd Service als Type=oneshot
 
-
 ### Service Datei
+
 ./system/monitor-system.service
 
 [Unit]
@@ -157,7 +164,7 @@ ExecStart=/usr/local/bin/monitor_system.sh
 
 [Install]
 WantedBy=multi-user.target
- 
+
 ### Timer
 
 -/system/monitor-system.timer

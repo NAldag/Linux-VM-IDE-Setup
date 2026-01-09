@@ -9,7 +9,7 @@ Dieses Repository dokumentiert ein selbst entworfenes Entwicklungs-Setup, um erw
 - Trennung von Host- und Arbeitsumgebung
 - Nutzung der gewohnten Windows-GUI, aber Skripting per bash
 - Automatisierte Backups mit systemd
-- Automatisierte Monitoring Skripts für Festplattenbelegung und Last
+- Automatisierte Monitoring Skripte für Festplattenbelegung und Last
 - Saubere, nachvollziehbare technische Dokumentation
 
 ## Ziel des Setups
@@ -137,16 +137,16 @@ archivierte Snapshots (zeitgestempelt)
 ### systemd Service
 
 Datei:
-~/backup-vm.service
+/system/backup-vm.service
 type=oneshot
-ExecStart=~/backup_vm.sh
+ExecStart=/system/backup_vm.sh
 Kein Dauerprozess
 sichtbar mit systemctl status
 
 ### Systemd Timer
 
 Datei:
-~/backup-vm.timer
+/system/backup-vm.timer
 
 Funktion:
 
@@ -179,7 +179,7 @@ Dieses Bash-Skript überwacht das Root-Dateisystem '/' sowie die durchschnittlic
 
 #### Physische Kerne zählen
 
-Ermöglicht die dynamische Berechnung von WARN/CRIT für Fesplattenplatz
+Ermöglicht die dynamische Berechnung von WARN/CRIT für Festplattenplatz
 
 ```bash
 
@@ -235,7 +235,7 @@ Timer: läuft in diesem Falle alle 15 Minuten (OnUnitActiveSec=15min) und ist pe
 
 ### Logs & Tests
 
-Logging erfolgt über STDOUT/STDERR in systemd Journal
+Logging erfolgt über STDOUT/STDERR in systemd-journal
 
 #### Timer vs crontab
 
