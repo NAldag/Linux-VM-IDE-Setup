@@ -1,8 +1,14 @@
 # Development Setup - Windows GUI Host / Linux Verwaltung & Code Verarbeitung
 
+## Kurzfassung
+
+Windows-Host mit Linux-VM für saubere, getrennte Entwicklunsarbeit.
+Verwaltung per SSH & tmux, Entwicklung über VS Code Remote-SSH.
+Automatisierte Backups und systemd-basiertes Monitoring.
+
 ## Was dieses Projekt demonstriert
 
-Dieses Repository dokumentiert ein selbst entworfenes Entwicklungs-Setup, um erworbene Fähigkeiten praxisnah und nachvollziehbar darzustellen.
+Dieses Repository dokumentiert im Detail ein selbst entworfenes Entwicklungs-Setup, um erworbene Fähigkeiten praxisnah und nachvollziehbar darzustellen.
 
 - Planung einer isolierten Entwicklungsumgebung
 - Sichere Remote-Verwaltung (SSH, tmux)
@@ -28,7 +34,7 @@ Aufgaben der Ubuntu Server VM:
 - Abhängigkeiten
 - Regelmäßiger backup job über Tar-Skripte
 
-## Architektur
+## Architektur (Tech Stack)
 
 - Windows 10 Host Maschine
 - VMWorkstation Pro
@@ -36,6 +42,12 @@ Aufgaben der Ubuntu Server VM:
 - Zugriff nur per SSH (Schlüsselaustausch)
 - Robust durch tmux Session
 - Entwicklung/Code-Editing über VS Code Remote-SSH
+- Bash
+- systemd (Services & Timer)
+- SSH (Schlüsselbasiert, Agent-Forwarding)
+- tmux
+- Git & Github
+- VS Code Remote-SSH
 
 ## Motivation & Designentscheidungen
 
@@ -251,11 +263,19 @@ systemctl show monitor-system.service -p ExecMainStatus
 
 #### Funktionstests
 
-Skript nur für aktuellen User ausführbar machen: chmod u+x monitor_system.sh, unnötige Berechtigungen vermeiden.
+Skript nur für aktuellen User ausführbar machen: chmod u+x monitor_system.sh, unnötige Berechtigungen vermeiden, mehr braucht es in diesem Fall nicht.
 Systemd starten: sudo systemctl start monitor-system.service  Timer aktivieren: sudo systemctl enable --now monitor-system.timer
 Lasttest: stress-ng --cpu 2 --timeout 180  
 Diskspace-Test: fallocate -l 10G ~/disk_test_file
 echo $? -Zeigt nach manuellem Skriptlauf
+
+## Lernerfolge
+
+- Saubere & dennoch bequeme Trennung von Host- und Arbeitsumgebung
+- Automatisierung mit systemd statt cron
+- Schreiben robuster Bash-Skripte (Exit-Codes, Fehlerbehandlung)
+- Systemgerechtes Monitoring von Ressourcen
+- Gründliche Dokumentation
 
 ## Bekannte Probleme & Lösungen
 
