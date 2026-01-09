@@ -170,7 +170,7 @@ systemctl enable --now backup-vm.timer
 
 ### Ziel des Skripts
 
-Dieses Bash-Skript überwacht das Root-Dateisystem '/' sowie die durchschnittliche 15-Minuten Last des Linux Systems
+Ein selbst entwickeltes Bash-Monitoring-Skript überwacht das Root-Dateisystem '/' sowie die durchschnittliche 15-Minuten Last des Linux Systems
 -Warnung bei Überschreitung vordefinierter Schwellenwerte
 -Einfaches Logging über systemd journal
 -Exit-Codes für maschinelle Auswertung und Automatisierung
