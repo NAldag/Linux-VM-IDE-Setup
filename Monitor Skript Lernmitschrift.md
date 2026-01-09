@@ -55,7 +55,7 @@ df -P / 			-Zeigt Belegung des Wurzelverzeichnisses ohne Umbrüche
 | awk 'NR==2 {print $5}' 	-Ausgabe wird an awk weitergegeben, welches in Zeile 2(NR==2) 5. Feld({print$5} ausgibt, awk braucht einfache Anführungszeichen   
 Next: Prozentzeichen entfernen, Integer oder floatvergleich  
 
-## Finale Syntax
+## Syntax und Tests
 
 Sprache: Bash
 set -u          -Falls Variable nicht existiert
@@ -114,10 +114,22 @@ echo "Disk Usage (/)   : $DISK_USAGE% => $DISK_STATUS"
 
 
 ### Test des Skripts (nur Last unter Stress)
-Simulierung einer vollen Festplatte auf to-do liste
+
+Erstellt 10 gig file für Test, größe muss für System angepasst werden, dann das Skript einmal ausführen:  
+fallocate -l 10G ~/disk_test_file  
+sudo systemctl start monitor-system.service  
+rm ~/disk_test_file
+
+WARN & CRIT werden korrekt angezeigt
 
 Last erzeugen:
-Stress-ng --cpu --timeout 
+Stress-ng --cpu --timeout 180 
+&
+./monitor_system.sh -mehrfach ausführen, last beobachten.  
+
+Test ohne Last: Keine Veränderung der Last  
+Last steigt kontinuierlich = Skript Logik OK
+
 
 
 Skript ausführbar machen, best practise: Keine Berechtigungen, die nicht zwingen notwendig sind, deshalb nur (u)ser + x
@@ -126,6 +138,44 @@ chmod u+x monitor_system.sh
 ./monitor_system.sh
 
 
+## Service Datei & Timer  erstellen
+Todo: Vollständiges Verständnis von Service Datei/Timer Logik & Syntax noch nicht adäquat, weitere Quellen finden, folgendes sollte funktionieren.
+
+Erklärung systemd Service als Type=oneshot
 
 
+### Service Datei
+./system/monitor-system.service
 
+[Unit]
+Description=System Health Check (Disk + Load)
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/monitor_system.sh
+
+[Install]
+WantedBy=multi-user.target
+ 
+### Timer
+
+-/system/monitor-system.timer
+
+[Unit]
+Description=Run system health check every 15 minutes
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=15min
+AccuracySec=1min
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+
+## Logs
+
+Logging erfolgt bewusst nur über STDOUT/STDERR und wird durch systemd im Journal erfasst, mehr wäre für dieses Skript/System Overkill
+
+journalctl -u system-monitor.service
