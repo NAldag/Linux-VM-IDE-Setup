@@ -1,0 +1,88 @@
+---
+- name: Minimal Developer VM Setup
+  hosts: devvm
+  become: yes
+  vars:
+    user_name: Watumba
+    packages:
+      - base-files
+      - bash
+      - bsdutils
+      - build-essential
+      - curl
+      - dash
+      - diffutils
+      - docker-compose
+      - docker.io
+      - findutils
+      - git
+      - grep
+      - grub-pc
+      - gzip
+      - hostname
+      - htop
+      - init
+      - linux-generic
+      - login
+      - micro
+      - ncurses-base
+      - ncurses-bin
+      - nodejs
+      - npm
+      - openssh-server
+      - python3
+      - python3-pip
+      - python3-venv
+      - stress-ng
+      - tmux
+      - ubuntu-minimal
+      - ubuntu-server
+      - ubuntu-server-minimal
+      - ubuntu-standard
+      - ufw
+      - util-linux
+      - vim
+      - wget
+      - wl-clipboard
+
+  tasks:
+    - name: Ensure user exists
+      ansible.builtin.user:
+        name: "{{ user_name }}"
+        shell: /bin/bash
+        state: present
+        groups: sudo
+        append: yes
+
+    - name: Install packages
+      ansible.builtin.apt:
+        name: "{{ packages }}"
+        state: present
+        update_cache: yes
+
+    - name: Copy monitoring script
+      ansible.builtin.copy:
+        src: ../files/monitor_system.sh
+        dest: /usr/local/bin/monitor_system.sh
+        mode: '0755'
+        owner: "{{ user_name }}"
+        group: "{{ user_name }}"
+
+    - name: Copy systemd service file
+      ansible.builtin.copy:
+        src: ../files/monitor-system.service
+        dest: /etc/systemd/system/monitor-system.service
+        mode: '0644'
+
+    - name: Copy systemd timer file
+      ansible.builtin.copy:
+        src: ../files/monitor-system.timer
+        dest: /etc/systemd/system/monitor-system.timer
+        mode: '0644'
+
+    - name: Enable and start systemd timer
+      ansible.builtin.systemd:
+        name: monitor-system.timer
+        enabled: yes
+        state: started
+        daemon_reload: yes
