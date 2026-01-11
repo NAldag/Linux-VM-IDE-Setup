@@ -130,11 +130,11 @@ Git läuft vollständig auf dem Server, nicht auf dem Windows Host.
 
 ### VS Code Remote-SSH hing bei "Setting up SSH host"
 
-Ursache:
+Mögliche Ursachen:
 
 - SSH-Agent auf Manuell gestellt, war bei jedem Start gestoppt
-- Verwendung eines shell-skript brechenden Nutzernamen: Beinhaltet ". " (Punkt und Leerzeichen)
-- Inkonsistente VS Code Installation
+- Verwendung eines für shell skripts und/oder VS Code ungünstigen Nutzernamens: Beinhaltet ". " (Punkt und Leerzeichen)
+- Inkonsistente VS Code Installation unter diesem Nutzernamen.
 
 Lösung:
 
