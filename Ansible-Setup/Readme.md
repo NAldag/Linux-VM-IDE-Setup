@@ -1,4 +1,4 @@
-# Minimal Ansible Playbook for Developer VM Setup
+# Minimal Ansible Playbook für Developer VM Setup
 
 ## Ziel
 
