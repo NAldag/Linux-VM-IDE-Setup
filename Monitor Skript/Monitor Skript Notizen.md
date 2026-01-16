@@ -104,7 +104,7 @@ fi
 
 ### Festplattenbelegung des home Verzeichnisses formatgerecht auslesen
 
-DISK_USAGE_RAW=$(df -P / | awk 'NR==2 {print $5}')
+DISK_USAGE_RAW=$(df -P / | awk 'NR==2 {print /$5}')
 DISK_USAGE=${DISK_USAGE_RAW%\%}
 
 ### Vergleich Festplatte mit festgelegten CRIT/WARN werten
